@@ -1,0 +1,232 @@
+<html lang="en"><head><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="STLEY TECH — explore an interactive neon robot and three digital experiences.">
+  <title>STLEY TECH | Interactive Robot</title>
+
+  <!-- Bootstrap 5 for the responsive layout and UI primitives. -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #08090d;
+      --surface: #10131b;
+      --surface-2: #171b26;
+      --paper: #f7f5ef;
+      --muted: #9299a9;
+      --line: rgba(255,255,255,.12);
+      --lime: #dfff3f;
+      --cyan: #57e6ff;
+      --violet: #9270ff;
+      --orange: #ff855f;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--paper);
+      background: var(--ink);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .2;
+      z-index: 10;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+    }
+    a { color: inherit; }
+    .mono { font-family: 'DM Mono', monospace; }
+    .container-xl { max-width: 1240px; }
+    .nav-shell { border-bottom: 1px solid var(--line); }
+    .navbar { padding: 1.25rem 0; }
+    .brand { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; letter-spacing: .08em; font-weight: 700; font-size: .9rem; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--lime); color: var(--ink); background: var(--lime); border-radius: 12px 12px 12px 2px; font-weight: 700; }
+    .nav-link { color: var(--muted) !important; font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; margin-left: 1.35rem; transition: color .25s ease; }
+    .nav-link:hover { color: var(--lime) !important; }
+    .nav-status { color: var(--lime); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+
+    .hero { position: relative; min-height: 760px; display: flex; align-items: center; padding: 6rem 0 7rem; }
+    .hero-copy { position: relative; z-index: 2; }
+    .eyebrow { color: var(--lime); font-size: .7rem; text-transform: uppercase; letter-spacing: .16em; }
+    .eyebrow::before { content: '↳'; margin-right: .65rem; color: var(--cyan); }
+    h1 { max-width: 760px; margin: 1.8rem 0 1.5rem; font-size: clamp(4rem, 10vw, 9.6rem); font-weight: 600; line-height: .84; letter-spacing: -.085em; }
+    h1 .accent { color: var(--lime); }
+    .lead-copy { max-width: 440px; color: var(--muted); font-size: 1.05rem; line-height: 1.7; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+    .btn-neon { border: 1px solid var(--lime); color: var(--ink); background: var(--lime); padding: .85rem 1.2rem; font-size: .73rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; border-radius: 999px; transition: transform .25s ease, box-shadow .25s ease; }
+    .btn-neon:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 0 0 28px rgba(223,255,63,.25); }
+    .btn-ghost { border: 1px solid var(--line); color: var(--paper); background: rgba(255,255,255,.03); padding: .85rem 1.2rem; font-size: .73rem; letter-spacing: .12em; text-transform: uppercase; border-radius: 999px; }
+    .btn-ghost:hover { color: var(--cyan); border-color: var(--cyan); }
+
+    #scene { position: absolute; inset: 0 -8% 0 35%; min-height: 600px; z-index: 1; pointer-events: none; }
+    .spline-stage { position: absolute; inset: 0; pointer-events: auto; }
+    .spline-stage canvas { width: 100%; height: 100%; display: block; }
+    spline-viewer { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; display: block; background: transparent; touch-action: pan-y; }
+    .scene-caption { position: absolute; z-index: 2; right: 3%; bottom: 14%; color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; }
+    .scene-caption span { color: var(--cyan); }
+    .scroll-cue { position: absolute; z-index: 2; bottom: 2.5rem; left: 0; display: flex; align-items: center; gap: .7rem; color: var(--muted); font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; }
+    .scroll-cue i { display: block; width: 42px; height: 1px; background: var(--lime); animation: pulse-line 1.8s ease-in-out infinite; }
+    @keyframes pulse-line { 0%,100% { width: 22px; opacity: .4; } 50% { width: 48px; opacity: 1; } }
+
+    .section-head { display: flex; justify-content: space-between; gap: 2rem; align-items: end; padding-bottom: 1.4rem; border-bottom: 1px solid var(--line); }
+    .section-kicker { color: var(--lime); font-size: .68rem; letter-spacing: .15em; text-transform: uppercase; }
+    h2 { margin: .7rem 0 0; font-size: clamp(2rem, 5vw, 4rem); letter-spacing: -.07em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+    .projects { padding: 3rem 0 8rem; }
+    .project-card { position: relative; display: flex; flex-direction: column; min-height: 410px; overflow: hidden; padding: 1.35rem; color: var(--ink); text-decoration: none; border: 1px solid transparent; border-radius: 4px 28px 4px 28px; transform-style: preserve-3d; transition: border-color .3s ease, box-shadow .3s ease; }
+    .project-card:hover { border-color: rgba(255,255,255,.6); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+    .project-card::after { content: ''; position: absolute; width: 190px; height: 190px; right: -85px; bottom: -90px; border: 1px solid currentColor; border-radius: 50%; opacity: .3; }
+    .card-lime { background: var(--lime); }
+    .card-violet { color: white; background: var(--violet); }
+    .card-orange { color: var(--ink); background: var(--orange); }
+    .card-top { display: flex; justify-content: space-between; font-size: .63rem; text-transform: uppercase; letter-spacing: .1em; }
+    .card-icon { display: grid; place-items: center; height: 165px; font-size: clamp(4rem, 8vw, 6.3rem); font-weight: 700; letter-spacing: -.15em; transform: translateZ(26px); }
+    .card-violet .card-icon { color: #d9ceff; }
+    .card-orange .card-icon { color: #ffc8b7; }
+    .project-card h3 { margin: auto 0 .55rem; font-size: 1.65rem; letter-spacing: -.06em; }
+    .project-card p { max-width: 285px; margin: 0; font-size: .8rem; line-height: 1.55; }
+    .card-arrow { position: absolute; right: 1.2rem; bottom: 1rem; font-size: 1.8rem; }
+    .chip { display: inline-block; margin-top: 1.35rem; padding: .35rem .65rem; border: 1px solid currentColor; border-radius: 999px; font-family: 'DM Mono', monospace; font-size: .61rem; }
+
+    .marquee { overflow: hidden; border-block: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+    .marquee-track { display: inline-flex; gap: 2.2rem; padding: 1rem 0; animation: marquee 24s linear infinite; font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; }
+    .marquee-track b { color: var(--lime); font-weight: 400; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    footer { padding: 2rem 0 3rem; color: var(--muted); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 991px) { #scene { inset: 22% -22% 0 28%; opacity: .82; } .hero { min-height: 820px; } .nav-link { margin-left: 0; margin-right: .8rem; } }
+    @media (max-width: 575px) { .hero { min-height: 800px; padding-top: 4rem; } #scene { inset: 37% -35% 0 -15%; opacity: .82; } h1 { font-size: clamp(4rem, 20vw, 6.5rem); } .section-head { display: block; } .section-head p { margin-top: 1rem; } .project-card { min-height: 360px; } .nav-status { display: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } .reveal { opacity: 1; transform: none; } }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="navbar navbar-expand-lg container-xl px-3 px-lg-4" aria-label="Main navigation">
+      <a class="brand" href="index.html"><span class="brand-mark">S</span><span>STLEY<br>TECH</span></a>
+      <div class="ms-auto d-flex align-items-center gap-2 gap-lg-4">
+        <span class="nav-status mono">● system online</span>
+        <div class="d-flex">
+          <a class="nav-link" href="#projects">Projects</a>
+          <a class="nav-link" href="#about">About</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero container-xl px-3 px-lg-4" id="about">
+      <div id="scene" aria-label="Interactive STLEY TECH 3D robot mascot">
+        <div class="spline-stage" id="spline-stage">
+          <spline-viewer url="https://prod.spline.design/Zsv3hEXNpsfsJVyb/scene.splinecode"></spline-viewer>
+        </div>
+      </div>
+      <div class="scene-caption mono">move cursor <span>↗</span> guide the robot</div>
+      <div class="hero-copy reveal is-visible">
+        <p class="eyebrow mono">STLEY TECH / Interactive mascot</p>
+        <h1>Power in<br><span class="accent">motion.</span></h1>
+        <p class="lead-copy">Meet the STLEY TECH robot — a custom neon companion built for curious minds, bold ideas, and digital spaces that move with you.</p>
+        <div class="hero-actions">
+          <a class="btn btn-neon" href="#projects">Explore spaces <span aria-hidden="true">↘</span></a>
+          <a class="btn btn-ghost" href="mailto:hello@stley.tech">Say hello</a>
+        </div>
+      </div>
+      <div class="scroll-cue mono"><i></i> Scroll to explore</div>
+    </section>
+
+    <div class="marquee mono" aria-hidden="true"><div class="marquee-track">STLEY TECH <b>✦</b> Design in motion <b>✦</b> Code with character <b>✦</b> STLEY TECH <b>✦</b> Design in motion <b>✦</b> Code with character <b>✦</b></div></div>
+
+    <section class="projects container-xl px-3 px-lg-4" id="projects">
+      <div class="section-head reveal is-visible">
+        <div><span class="section-kicker mono">01 — Select a project</span><h2>Pick a space.</h2></div>
+        <p class="mono">Click a card to begin ↗</p>
+      </div>
+      <div class="row g-3 g-lg-4 mt-2">
+	        <div class="col-lg-4 reveal">
+	          <a class="project-card card-lime" href="STLEY_TECH/index.html" data-tilt="">
+	            <div class="card-top mono"><span>01 / HTML</span><span>raw</span></div>
+	            <div class="card-icon" aria-hidden="true">&lt;/&gt;</div>
+	            <h3>HTML Only</h3>
+	            <p>A clean shop page for STLEY TECH gaming phones and mobile gaming essentials.</p>
+            <span class="chip">minimal / direct</span><span class="card-arrow">↗</span>
+          </a>
+        </div>
+        <div class="col-lg-4 reveal">
+          <a class="project-card card-violet" href="STLEY_TECH_CSS/index.html" data-tilt="">
+            <div class="card-top mono"><span>02 / HTML + CSS</span><span>styled</span></div>
+            <div class="card-icon">✦</div>
+            <h3>HTML With CSS</h3>
+            <p>A bold, responsive gaming-phone shop with performance-focused product categories.</p>
+            <span class="chip">visual / expressive</span><span class="card-arrow">↗</span>
+          </a>
+        </div>
+        <div class="col-lg-4 reveal">
+          <a class="project-card card-orange" href="personal_space/index.html" data-tilt="">
+            <div class="card-top mono"><span>03 / Bootstrap</span><span>responsive</span></div>
+            <div class="card-icon">B<span style="font-size:.48em">5</span></div>
+            <h3>Bootstrap</h3>
+            <p>A polished personal space built with Bootstrap for a flexible, mobile-first experience.</p>
+            <span class="chip">system / adaptable</span><span class="card-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container-xl px-3 px-lg-4 d-flex justify-content-between flex-wrap gap-3"><span>© 2026 STANLEY TAGUBAT</span><span class="mono">Built with intent / made to move</span></footer>
+
+  <script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.75/build/spline-viewer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (() => {
+      // Watermark Removal Logic
+      const removeSplineWatermark = () => {
+        const splineViewer = document.querySelector('spline-viewer');
+        if (splineViewer && splineViewer.shadowRoot) {
+          const logo = splineViewer.shadowRoot.querySelector('#logo');
+          if (logo) {
+            logo.style.display = 'none';
+          }
+        }
+      };
+
+      // Run immediately and also on a short delay to ensure the component is initialized
+      removeSplineWatermark();
+      setTimeout(removeSplineWatermark, 1000);
+      setInterval(removeSplineWatermark, 2000); // Periodic check for dynamic updates
+
+      const stage = document.getElementById('scene');
+      window.addEventListener('wheel', event => {
+        const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+        const insideSpline = path.some(node => node && node.tagName === 'SPLINE-VIEWER') || (event.target && event.target.closest && event.target.closest('spline-viewer'));
+        if (insideSpline) { event.preventDefault(); window.scrollBy({ top: event.deltaY, left: 0, behavior: 'auto' }); }
+      }, { capture: true, passive: false });
+      
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        card.addEventListener('pointermove', e => { 
+          const r = card.getBoundingClientRect(); 
+          card.style.transform = `perspective(900px) rotateX(${((e.clientY-r.top)/r.height-.5)*-6}deg) rotateY(${((e.clientX-r.left)/r.width-.5)*7}deg) translateY(-6px)`; 
+        });
+        card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+      });
+      
+      const reveal = new IntersectionObserver(entries => entries.forEach(entry => { 
+        if (entry.isIntersecting) { 
+          entry.target.classList.add('is-visible'); 
+          reveal.unobserve(entry.target); 
+        } 
+      }), { threshold: .15 });
+      document.querySelectorAll('.reveal').forEach(el => reveal.observe(el));
+    })();
+  </script>
+</body></html>
