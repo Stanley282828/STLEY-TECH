@@ -1,0 +1,17 @@
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "same-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+<FilesMatch "^(config|db|auth|session)\.php$">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "^(?:\.database-installed|.*\.(?:sql|bak|log|ini|dist))$">
+  Require all denied
+</FilesMatch>

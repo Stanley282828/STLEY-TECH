@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="STLEY TECH member login and OPPO K13 Turbo Pro gaming phone.">
+    <title>STLEY TECH | Member Login</title>
+    <link rel="stylesheet" href="style.css?v=account-highlight-2">
+</head>
+<body class="dark-page login-page">
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html"><img src="logo.png" alt="STLEY TECH logo"></a>
+            <nav class="site-nav" aria-label="Main navigation"><a class="active" href="index.html">Login</a><a href="shop.html">Shop</a><a href="contact.html">Contact</a></nav>
+            <a class="header-cta" href="shop.html">Browse phones <span>→</span></a>
+        </div>
+    </header>
 
+    <main>
+        <section class="login-hero container">
+            <div class="login-showcase">
+                <div class="showcase-top"><span>STLEY TECH / MEMBER ACCESS</span><span>01</span></div>
+                <div class="showcase-art">
+                    <img src="oppok13_main.jpg" alt="OPPO K13 Turbo Pro gaming phone">
+                </div>
+                <div class="showcase-details">
+                    <div><p>Featured device</p><h1>OPPO K13<br><span>Turbo Pro</span></h1></div>
+                    <a href="oppo.html">View phone <span>↗</span></a>
+                </div>
+            </div>
+
+            <div class="login-panel">
+                <div class="panel-label"><span>WELCOME BACK</span><span class="panel-online">● ONLINE</span></div>
+                <div class="login-heading"><p class="small-title">Member login</p><h2>Sign in to<br><span>your account.</span></h2><p>Enter your details to continue shopping with STLEY TECH.</p><div class="create-account-p">
+    <span class="create-account-label">New to STLEY TECH?</span>
+    <a class="create-account-link" href="register.html">Create a new account <span aria-hidden="true">→</span></a>
+</div></div>
+                <form action="login.php" method="post"><input type="hidden" name="csrf_token" value="">
+                    <div class="form-field"><label for="email">Email address</label><input id="email" type="email" name="email" placeholder="Enter email address" autocomplete="email" required></div>
+                    <div class="form-field"><label for="password">Password</label><input id="password" type="password" name="pass" placeholder="Enter password" autocomplete="current-password" required></div>
+                    <div class="login-options"><label for="remember"><input id="remember" type="checkbox" name="remember"> Remember me</label><a href="forgot.html">Forgot password?</a></div>
+                    <button class="button green-button" type="submit">Log in <span>→</span></button>
+                    <button class="reset-button" type="reset">Clear form</button>
+                </form>
+                <div class="login-divider"><span>OR</span></div>
+                <p class="guest-login">Want to look around first? <a href="shop.html">Browse as guest <span>↗</span></a></p>
+            </div>
+        </section>
+
+        <section class="login-benefits container">
+            <div><span>01</span><strong>Keep your picks</strong><small>Save the phones you like.</small></div>
+            <div><span>02</span><strong>Check details</strong><small>Compare specs before ordering.</small></div>
+            <div><span>03</span><strong>Shop with ease</strong><small>Everything in one place.</small></div>
+        </section>
+    </main>
+
+    <footer class="site-footer"><div class="container footer-inner"><p>© 2026 STLEY TECH SHOP</p><p>By Prince Tagubat</p><div class="footer-links"><a href="contact.html">Contact</a><a href="order.html">Orders</a><a href="shop.html">Shop</a></div></div></footer>
+<script src="csrf.php"></script><script src="flash.php"></script></body>
+</html>
